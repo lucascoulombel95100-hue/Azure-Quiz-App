@@ -1,0 +1,95 @@
+﻿docker :  Image azure-quiz-app-backend Building 
+Au caractère Ligne:1 : 1
++ docker compose build backend 2>&1 | Out-File -Encoding utf8 preuves\J ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ( Image azure-quiz-app-backend Building :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+#1 [internal] load local bake definitions
+#1 reading from stdin 551B 0.1s done
+#1 DONE 0.1s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 30B 0.2s
+#2 transferring dockerfile: 206B 0.3s done
+#2 DONE 0.3s
+
+#3 [internal] load metadata for docker.io/library/node:22-alpine
+#3 DONE 0.7s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 95B done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 63B done
+#5 DONE 0.0s
+
+#6 [1/5] FROM docker.io/library/node:22-alpine@sha256:1314fb30ec37592d5845e5a160d522c0e680972aa534549940b8d73bde88481a
+#6 resolve docker.io/library/node:22-alpine@sha256:1314fb30ec37592d5845e5a160d522c0e680972aa534549940b8d73bde88481a 0.0s done
+#6 DONE 0.0s
+
+#7 [2/5] WORKDIR /app
+#7 CACHED
+
+#8 [3/5] COPY package*.json ./
+#8 CACHED
+
+#9 [4/5] RUN npm ci --omit=dev && npm cache clean --force
+#9 1.579 npm error code EUSAGE
+#9 1.583 npm error
+#9 1.583 npm error The `npm ci` command can only install with an existing package-lock.json or
+#9 1.583 npm error npm-shrinkwrap.json with lockfileVersion >= 1. Run an install with npm@5 or
+#9 1.583 npm error later to generate a package-lock.json file, then try again.
+#9 1.583 npm error
+#9 1.583 npm error Clean install a project
+#9 1.583 npm error
+#9 1.583 npm error Usage:
+#9 1.583 npm error npm ci
+#9 1.583 npm error
+#9 1.583 npm error Options:
+#9 1.583 npm error [--install-strategy <hoisted|nested|shallow|linked>] [--legacy-bundling]
+#9 1.583 npm error [--global-style] [--omit <dev|optional|peer> [--omit <dev|optional|peer> ...]]
+#9 1.583 npm error [--include <prod|dev|optional|peer> [--include <prod|dev|optional|peer> ...]]
+#9 1.583 npm error [--strict-peer-deps] [--foreground-scripts] [--ignore-scripts] [--no-audit]
+#9 1.583 npm error [--no-bin-links] [--no-fund] [--dry-run]
+#9 1.583 npm error [-w|--workspace <workspace-name> [-w|--workspace <workspace-name> ...]]
+#9 1.583 npm error [-ws|--workspaces] [--include-workspace-root] [--install-links]
+#9 1.583 npm error
+#9 1.583 npm error aliases: clean-install, ic, install-clean, isntall-clean
+#9 1.583 npm error
+#9 1.583 npm error Run "npm help ci" for more info
+#9 1.589 npm error A complete log of this run can be found in: /root/.npm/_logs/2026-11-26T10_53_54_162Z-debug-0.log
+#9 ERROR: process "/bin/sh -c npm ci --omit=dev && npm cache clean --force" did not complete successfully: exit code: 1
+------
+ > [4/5] RUN npm ci --omit=dev && npm cache clean --force:
+1.583 npm error [--include <prod|dev|optional|peer> [--include <prod|dev|optional|peer> ...]]
+1.583 npm error [--strict-peer-deps] [--foreground-scripts] [--ignore-scripts] [--no-audit]
+1.583 npm error [--no-bin-links] [--no-fund] [--dry-run]
+1.583 npm error [-w|--workspace <workspace-name> [-w|--workspace <workspace-name> ...]]
+1.583 npm error [-ws|--workspaces] [--include-workspace-root] [--install-links]
+1.583 npm error
+1.583 npm error aliases: clean-install, ic, install-clean, isntall-clean
+1.583 npm error
+1.583 npm error Run "npm help ci" for more info
+1.589 npm error A complete log of this run can be found in: /root/.npm/_logs/2026-11-26T10_53_54_162Z-debug-0.log
+------
+Dockerfile:4
+
+--------------------
+
+   2 |     WORKDIR /app
+
+   3 |     COPY package*.json ./
+
+   4 | >>> RUN npm ci --omit=dev && npm cache clean --force
+
+   5 |     COPY . .
+
+   6 |     USER node
+
+--------------------
+
+failed to solve: process "/bin/sh -c npm ci --omit=dev && npm cache clean --force" did not complete successfully: 
+exit code: 1
+

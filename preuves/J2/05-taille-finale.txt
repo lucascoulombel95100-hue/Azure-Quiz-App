@@ -1,0 +1,3 @@
+﻿IMAGE                            ID             DISK USAGE   CONTENT SIZE   EXTRA
+azure-quiz-app-backend:latest    911a80bc0bab        273MB         67.6MB   U    
+azure-quiz-app-frontend:latest   16648c03823e        111MB         31.7MB   U    
