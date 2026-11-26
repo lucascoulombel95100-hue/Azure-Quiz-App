@@ -1,0 +1,3 @@
+﻿Location              Name      ResourceGroup
+--------------------  --------  ----------------
+Germany West Central  cae-quiz  rg-quiz-groupe01

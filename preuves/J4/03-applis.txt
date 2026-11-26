@@ -1,0 +1,4 @@
+﻿Name           Location              ResourceGroup     Fqdn
+-------------  --------------------  ----------------  --------------------------------------------------------------------------------
+quiz-backend   Germany West Central  rg-quiz-groupe01  quiz-backend.internal.jollysky-62d8a042.germanywestcentral.azurecontainerapps.io
+quiz-frontend  Germany West Central  rg-quiz-groupe01  quiz-frontend.jollysky-62d8a042.germanywestcentral.azurecontainerapps.io
