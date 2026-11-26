@@ -69,3 +69,17 @@ az acr repository show-tags -n "$ACR_NAME" --repository quiz-backend -o table
 az acr repository show-tags -n "$ACR_NAME" --repository quiz-frontend -o table
 
 echo "==> Terminé : $LOGIN_SERVER/quiz-backend:$TAG et $LOGIN_SERVER/quiz-frontend:$TAG"
+
+# ---------- Partie J4 : mise à jour des applis Container Apps ----------
+# quiz-backend et quiz-frontend ont été créées une première fois à la main (J4).
+# Ici, on leur donne seulement la nouvelle image. Les secrets ne sont pas touchés :
+# ils restent stockés dans Azure, jamais dans ce script.
+if az containerapp show -n quiz-backend -g "$RG" -o none 2>/dev/null; then
+  echo "==> Mise à jour des applis Container Apps (tag $TAG)"
+  az containerapp update -n quiz-backend -g "$RG" --image "$LOGIN_SERVER/quiz-backend:$TAG" -o none
+  az containerapp update -n quiz-frontend -g "$RG" --image "$LOGIN_SERVER/quiz-frontend:$TAG" -o none
+  FQDN="$(az containerapp show -n quiz-frontend -g "$RG" --query properties.configuration.ingress.fqdn -o tsv)"
+  echo "==> Site en ligne : https://$FQDN"
+else
+  echo "==> Applis Container Apps absentes : les créer d'abord (voir les étapes du J4)."
+fi

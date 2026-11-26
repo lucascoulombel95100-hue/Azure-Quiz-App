@@ -1,0 +1,14 @@
+﻿HTTP/1.1 200 OK
+server: nginx/1.31.7
+date: Thu, 26 Nov 2026 14:44:40 GMT
+content-type: application/json; charset=utf-8
+content-length: 15
+x-powered-by: Express
+access-control-allow-origin: *
+ratelimit-policy: 100;w=900
+ratelimit-limit: 100
+ratelimit-remaining: 99
+ratelimit-reset: 900
+etag: W/"f-VaSQ4oDUiZblZNAEkkN+sX+q3Sg"
+
+{"status":"ok"}

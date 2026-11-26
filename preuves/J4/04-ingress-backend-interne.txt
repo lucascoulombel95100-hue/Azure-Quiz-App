@@ -1,0 +1,3 @@
+﻿AllowInsecure    ExposedPort    External    Fqdn                                                                              TargetPort    Transport
+---------------  -------------  ----------  --------------------------------------------------------------------------------  ------------  -----------
+True             0              False       quiz-backend.internal.jollysky-62d8a042.germanywestcentral.azurecontainerapps.io  3007          Auto
