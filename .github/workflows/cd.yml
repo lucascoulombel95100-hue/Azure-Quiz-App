@@ -1,0 +1,84 @@
+# J6-B : déploiement après la fusion dans main.
+# Construit les images, les revérifie avec Trivy, les envoie dans ACR avec le tag du commit,
+# puis met à jour les 2 Container Apps (ce qui crée de nouvelles révisions).
+#
+# Connexion à Azure sans mot de passe (OIDC) : GitHub prouve à Azure qu'il s'agit bien de ce
+# dépôt et de la branche main. Il faut 3 secrets dans le dépôt GitHub :
+# AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_SUBSCRIPTION_ID (voir scripts/setup-github-oidc.sh).
+# Les Pull Requests ne déclenchent jamais ce workflow.
+
+name: CD
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+# Un seul déploiement à la fois
+concurrency:
+  group: deploiement-azure
+  cancel-in-progress: false
+
+env:
+  ACR_NAME: acrquizg01
+  RG: rg-quiz-groupe01
+
+jobs:
+  deploy:
+    name: deploy (ACR + Container Apps)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Tag des images = commit
+        run: echo "TAG=${GITHUB_SHA::7}" >> "$GITHUB_ENV"
+
+      - name: Construire les images
+        run: |
+          docker build -t "$ACR_NAME.azurecr.io/quiz-backend:$TAG" ./backend
+          docker build -t "$ACR_NAME.azurecr.io/quiz-frontend:$TAG" .
+
+      - name: Contrôle Trivy avant publication (bloquant sur CRITICAL)
+        run: |
+          for img in quiz-backend quiz-frontend; do
+            docker run --rm \
+              -v /var/run/docker.sock:/var/run/docker.sock \
+              -v "$RUNNER_TEMP/trivy-cache:/root/.cache/trivy" \
+              aquasec/trivy:0.70.0 image --severity CRITICAL --exit-code 1 \
+              "$ACR_NAME.azurecr.io/$img:$TAG"
+          done
+
+      - name: Connexion à Azure (OIDC, sans mot de passe)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Envoyer les images dans ACR
+        run: |
+          az acr login -n "$ACR_NAME"
+          docker push "$ACR_NAME.azurecr.io/quiz-backend:$TAG"
+          docker push "$ACR_NAME.azurecr.io/quiz-frontend:$TAG"
+
+      - name: Mettre à jour les Container Apps
+        run: |
+          az containerapp update -n quiz-backend -g "$RG" --image "$ACR_NAME.azurecr.io/quiz-backend:$TAG" -o none
+          az containerapp update -n quiz-frontend -g "$RG" --image "$ACR_NAME.azurecr.io/quiz-frontend:$TAG" -o none
+
+      - name: Vérifier les nouvelles révisions et /health
+        run: |
+          for app in quiz-backend quiz-frontend; do
+            az containerapp revision list -n "$app" -g "$RG" \
+              --query "[?properties.active].{Revision:name, Image:properties.template.containers[0].image, Sante:properties.healthState}" -o table
+          done
+          FQDN="$(az containerapp show -n quiz-frontend -g "$RG" --query properties.configuration.ingress.fqdn -o tsv)"
+          curl -fsS --retry 10 --retry-delay 6 --retry-all-errors "https://$FQDN/health"
+          echo
+          echo "Site en ligne : https://$FQDN"
