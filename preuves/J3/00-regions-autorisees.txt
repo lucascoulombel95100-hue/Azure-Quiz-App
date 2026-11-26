@@ -1,0 +1,35 @@
+Régions autorisées par l'abonnement Azure for Students pour un registre ACR (test à blanc, rien n'est créé)
+Commande, pour chaque région :
+  az deployment group validate -g rg-quiz-groupe01 --template-file acr-test.json --parameters location=<region> name=acrquizg01
+
+Résumé sur 65 régions :
+   7 AUTORISE
+   6 LocationNotAvailableForResourceType
+  52 RequestDisallowedByAzure
+
+Régions autorisées :
+  belgiumcentral
+  denmarkeast
+  germanywestcentral
+  italynorth
+  jioindiacentral
+  jioindiawest
+  switzerlandnorth
+
+France Central : RequestDisallowedByAzure
+Choix : germanywestcentral (ACR, Log Analytics et Container Apps autorisés)
+
+Contenu de acr-test.json (modèle minimal d'un registre, utilisé seulement pour le test) :
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": { "location": { "type": "string" }, "name": { "type": "string" } },
+  "resources": [{
+    "type": "Microsoft.ContainerRegistry/registries",
+    "apiVersion": "2023-07-01",
+    "name": "[parameters('name')]",
+    "location": "[parameters('location')]",
+    "sku": { "name": "Basic" },
+    "properties": { "adminUserEnabled": false }
+  }]
+}

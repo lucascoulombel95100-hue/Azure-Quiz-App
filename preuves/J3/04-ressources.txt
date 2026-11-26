@@ -1,0 +1,3 @@
+Nom         Type                                    Region
+----------  --------------------------------------  ------------------
+acrquizg01  Microsoft.ContainerRegistry/registries  germanywestcentral
