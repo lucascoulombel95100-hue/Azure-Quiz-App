@@ -21,7 +21,7 @@ CREATE TABLE answers (
     quiz_result_id INTEGER REFERENCES quiz_results(id) ON DELETE CASCADE,
     question_index INTEGER NOT NULL,
     question_text TEXT NOT NULL,
-    user_answer TEXT NOT NULL,
+    user_answer TEXT,
     correct_answer TEXT NOT NULL,
     is_correct BOOLEAN NOT NULL,
     time_spent_ms INTEGER
