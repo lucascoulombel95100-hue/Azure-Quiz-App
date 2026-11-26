@@ -20,6 +20,9 @@ RG="${RG:-rg-quiz-groupe01}"
 LOCATION="${LOCATION:-germanywestcentral}"
 IDENTITY="${IDENTITY:-id-github-quiz}"
 REPO="${REPO:-lucascoulombel95100-hue/Azure-Quiz-App}"
+# GitHub ajoute maintenant les numéros du compte et du dépôt dans l'identité qu'il présente
+# (ligne « subject claim » du log de azure/login). Azure exige que ce texte corresponde exactement.
+SUBJECT="${SUBJECT:-repo:lucascoulombel95100-hue@277745155/Azure-Quiz-App@1472863465:ref:refs/heads/main}"
 
 if [ -n "${AZ_SUBSCRIPTION:-}" ]; then
   az account set --subscription "$AZ_SUBSCRIPTION"
@@ -36,12 +39,19 @@ CLIENT_ID="$(az identity show -g "$RG" -n "$IDENTITY" --query clientId -o tsv)"
 PRINCIPAL_ID="$(az identity show -g "$RG" -n "$IDENTITY" --query principalId -o tsv)"
 
 echo "==> 2. Connexion autorisée depuis GitHub Actions (branche main de $REPO)"
-if az identity federated-credential show -g "$RG" --identity-name "$IDENTITY" -n github-main -o none 2>/dev/null; then
+CURRENT_SUBJECT="$(az identity federated-credential show -g "$RG" --identity-name "$IDENTITY" -n github-main --query subject -o tsv 2>/dev/null || true)"
+if [ "$CURRENT_SUBJECT" = "$SUBJECT" ]; then
   echo "    existe déjà"
+elif [ -n "$CURRENT_SUBJECT" ]; then
+  az identity federated-credential update -g "$RG" --identity-name "$IDENTITY" -n github-main \
+    --issuer https://token.actions.githubusercontent.com \
+    --subject "$SUBJECT" \
+    --audiences api://AzureADTokenExchange -o none
+  echo "    mise à jour ($SUBJECT)"
 else
   az identity federated-credential create -g "$RG" --identity-name "$IDENTITY" -n github-main \
     --issuer https://token.actions.githubusercontent.com \
-    --subject "repo:$REPO:ref:refs/heads/main" \
+    --subject "$SUBJECT" \
     --audiences api://AzureADTokenExchange -o none
   echo "    créée"
 fi
