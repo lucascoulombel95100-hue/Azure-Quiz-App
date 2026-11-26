@@ -1,0 +1,57 @@
+# J6-A : contrôles sur chaque Pull Request vers main.
+# On construit les 2 images puis on les scanne avec Trivy.
+# Une seule faille CRITICAL suffit à faire échouer le contrôle, et donc à bloquer la fusion
+# (avec la règle « Require status checks » sur main).
+# Ce workflow n'utilise aucun secret et ne déploie rien.
+
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build-scan:
+    name: build-scan (${{ matrix.image }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: frontend
+            context: .
+          - image: backend
+            context: ./backend
+
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Construire l'image
+        run: docker build -t quiz-${{ matrix.image }}:ci ${{ matrix.context }}
+
+      - name: Rapport Trivy complet (HIGH et CRITICAL, pour information)
+        run: |
+          docker run --rm \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -v "$RUNNER_TEMP/trivy-cache:/root/.cache/trivy" \
+            aquasec/trivy:0.70.0 image --severity HIGH,CRITICAL --exit-code 0 \
+            quiz-${{ matrix.image }}:ci | tee trivy-${{ matrix.image }}.txt
+
+      - name: Garder le rapport
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-${{ matrix.image }}
+          path: trivy-${{ matrix.image }}.txt
+
+      - name: Contrôle bloquant (échoue s'il y a une faille CRITICAL)
+        run: |
+          docker run --rm \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -v "$RUNNER_TEMP/trivy-cache:/root/.cache/trivy" \
+            aquasec/trivy:0.70.0 image --severity CRITICAL --exit-code 1 \
+            quiz-${{ matrix.image }}:ci
