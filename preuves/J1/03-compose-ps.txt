@@ -1,0 +1,4 @@
+NAME                       IMAGE                                                                     COMMAND                  SERVICE    CREATED         STATUS                   PORTS
+eval-quiz-app-backend-1    sha256:4f348d4ac168625b776ed2309729ab59208b52c4d5e0515670dc026d32533b3a   "docker-entrypoint.s…"   backend    6 minutes ago   Up 6 minutes             3007/tcp
+eval-quiz-app-db-1         postgres:16-alpine                                                        "docker-entrypoint.s…"   db         6 minutes ago   Up 6 minutes (healthy)   5432/tcp
+eval-quiz-app-frontend-1   sha256:a1a9a6dbdc6705ee73c9bbb03eeb73d9609689c4a4e108bff925f37ec21580b3   "/docker-entrypoint.…"   frontend   6 minutes ago   Up 6 minutes             0.0.0.0:8087->80/tcp, [::]:8087->80/tcp

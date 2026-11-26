@@ -1,0 +1,30 @@
+
+#21 [frontend build 6/6] RUN npm run build
+#21 CACHED
+
+#10 [frontend build 2/6] WORKDIR /app
+#10 CACHED
+
+#22 [frontend build 3/6] COPY package*.json ./
+#22 CACHED
+
+#23 [frontend build 5/6] COPY . .
+#23 CACHED
+
+#24 [frontend stage-1 3/3] COPY --from=build /app/dist /usr/share/nginx/html
+#24 CACHED
+
+#25 [frontend] exporting to image
+#25 exporting layers done
+#25 exporting manifest sha256:d096ab9eb14c06129ce748159456e6e483713cc87a6ed6b0023996486e88d182 done
+#25 exporting config sha256:7b08aa65887e4ca7934ddd5d35365fe9b31bd432c972ccdf3c91b7fa3b028324 done
+#25 exporting attestation manifest sha256:3549ad535a2140659de77d19b0d80d7e356b39f7cb0c6d976439c5873cad19bf done
+#25 exporting manifest list sha256:042bb2550b896e750fcb331b0a4f6213d40cab5997d15bb03aa02bce985ac4c3 done
+#25 naming to docker.io/library/eval-quiz-app-frontend:latest done
+#25 unpacking to docker.io/library/eval-quiz-app-frontend:latest done
+#25 DONE 0.0s
+
+#26 [frontend] resolving provenance for metadata file
+#26 DONE 0.0s
+ Image eval-quiz-app-frontend Built 
+ Image eval-quiz-app-backend Built 
