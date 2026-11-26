@@ -5,8 +5,11 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
-FROM nginx:1.27-alpine
+FROM nginxinc/nginx-unprivileged:mainline-alpine
+USER root
+RUN apk upgrade --no-cache
+USER 101
 COPY nginx/default.conf.template /etc/nginx/templates/default.conf.template
 COPY --from=build /app/dist /usr/share/nginx/html
 ENV BACKEND_HOST=backend:3007
-EXPOSE 80
+EXPOSE 8080

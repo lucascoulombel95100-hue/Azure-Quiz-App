@@ -1,0 +1,4 @@
+﻿IMAGE                   ID             DISK USAGE   CONTENT SIZE   EXTRA
+quiz-backend:initial    6d45b31b44e6        268MB         65.6MB        
+quiz-docker:initial     4082310ef976        243MB         60.2MB   U    
+quiz-frontend:initial   98eb896d8edf       73.7MB           21MB        
