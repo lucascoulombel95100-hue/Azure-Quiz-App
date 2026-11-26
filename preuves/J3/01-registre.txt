@@ -1,0 +1,3 @@
+Nom         Serveur                SKU    Region
+----------  ---------------------  -----  ------------------
+acrquizg01  acrquizg01.azurecr.io  Basic  germanywestcentral
