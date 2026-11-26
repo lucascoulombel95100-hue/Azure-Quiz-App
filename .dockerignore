@@ -1,0 +1,11 @@
+node_modules
+dist
+.git
+.github
+.env*
+backend
+database
+docs
+docs-groupe
+preuves
+*.md
