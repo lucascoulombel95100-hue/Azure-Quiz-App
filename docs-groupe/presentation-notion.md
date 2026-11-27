@@ -862,47 +862,54 @@ On ouvre la PR : `build-scan (frontend)` doit être **rouge**, et la fusion **bl
 
 # Partie 8 — La démo de la soutenance
 
-Pendant la soutenance, on montre la chaîne complète en modifiant une question. CI et CD prennent environ 6 minutes en tout : on lance la PR **au début**, et on présente pendant que ça tourne.
+On montre la chaîne complète **en partant de zéro**, juste après la diapo 5 (environ 6 minutes : CI ≈ 40 s, CD ≈ 2 min).
 
-**Avant de passer :**
-
-- ouvrir le site en ligne (le frontend s'éteint quand il n'est pas utilisé) ;
-- ouvrir GitHub (onglets Pull requests et Actions), le portail Azure et un terminal dans le projet ;
-- garder la PR « test/trivy-bloquant » (rouge) prête à montrer.
-
-**Pendant la soutenance :**
-
-| Quand | Ce qu'on fait |
-| --- | --- |
-| Tout au début | Modifier une question, pousser la branche, ouvrir la PR (commandes ci-dessous) |
-| Diapos 1 à 3 | La CI tourne pendant qu'on présente |
-| Diapo 5 (CI/CD) | Montrer les 2 contrôles verts, puis la PR rouge du test Trivy. Hameem approuve, on fusionne : le CD démarre |
-| Fin (après environ 2 min) | Montrer le CD vert, les nouvelles révisions et la question modifiée en ligne |
+| Étape | Ce qu'on fait | Ce qu'on montre |
+| --- | --- | --- |
+| 1 | On remet **à la main** l'image `nginx:1.27-alpine` (Alpine 3.21) et on retire `apk upgrade`, puis PR | `build-scan (frontend)` **rouge** (failles CRITICAL), « Merging is blocked » |
+| 2 | On remet le Dockerfile de `main` (image corrigée en J2), puis push | Les 2 contrôles **verts** |
+| 3 | On modifie la 2e question, push, Hameem approuve, on fusionne | Le **CD** déploie, la nouvelle question est **en ligne** |
 
 ```bash
 git checkout main
 git pull
-git checkout -b demo/question-live
+git checkout -b demo/live
 ```
 
-Dans `questions_docker.js`, on change le texte de la 2e question (la 1re a déjà servi à la répétition, PR #12) :
-`"Quelle est la principale fonction d'un volume Docker ?"` devient `"À quoi sert principalement un volume Docker ?"`
+**Étape 1 :** dans `Dockerfile`, `FROM nginxinc/nginx-unprivileged:mainline-alpine` devient `FROM nginx:1.27-alpine`, et on supprime `RUN apk upgrade --no-cache`.
+
+```bash
+git add Dockerfile
+git commit -m "Démo : image nginx 1.27 (Alpine 3.21, vulnérable)"
+git push -u origin demo/live
+```
+
+**Étape 2 :**
+
+```bash
+git checkout origin/main -- Dockerfile
+git add Dockerfile
+git commit -m "Démo : retour à l'image nginx non root à jour"
+git push
+```
+
+**Étape 3 :** dans `questions_docker.js`, `"Quelle est la principale fonction d'un volume Docker ?"` devient `"À quoi sert principalement un volume Docker ?"`.
 
 ```bash
 git add questions_docker.js
 git commit -m "Démo : modification d'une question Docker"
-git push -u origin demo/question-live
+git push
 ```
 
-Après le CD, pour vérifier sans jouer tout le quiz (les questions sont mélangées) :
+Après l'approbation de Hameem, la fusion et le CD, on vérifie sans jouer tout le quiz (les questions sont mélangées) :
 
 ```bash
 ./scripts/verifier-question.sh "À quoi sert principalement un volume Docker"
 ```
 
-**Plan B :** si Azure ou GitHub est lent, on montre les captures et les liens des exécutions précédentes (`preuves/J6`).
+**Plan B :** la PR #11 (test Trivy, déjà rouge) et les captures de `preuves/J6`.
 
-L'antisèche complète (préparation, déroulé minute par minute, plan B) est dans `docs-groupe/demo-soutenance.md`.
+L'antisèche complète (préparation, phrases à dire, plan B) est dans `docs-groupe/demo-soutenance.md`.
 
 ---
 
