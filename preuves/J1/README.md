@@ -1,8 +1,12 @@
 # J1 — Conteneurisation locale (26/11/2026)
 
 ## Lancement
-cp .env.example .env   # puis remplacer les valeurs
+```bash
+cp .env.example .env
 docker compose up --build -d
+```
+Avant le `up`, remplacer les valeurs dans `.env`.
+
 Quiz : http://localhost:8087 — Admin : http://localhost:8087/gestion-quiz
 
 ## Architecture

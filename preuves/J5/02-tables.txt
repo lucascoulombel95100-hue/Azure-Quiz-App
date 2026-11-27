@@ -1,0 +1,8 @@
+              List of relations
+ Schema |     Name     | Type  |    Owner     
+--------+--------------+-------+--------------
+ public | answers      | table | neondb_owner
+ public | quiz_results | table | neondb_owner
+ public | users        | table | neondb_owner
+(3 rows)
+
