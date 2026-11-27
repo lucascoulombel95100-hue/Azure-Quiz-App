@@ -1,0 +1,4 @@
+ firstname | score | total_questions | completed_at 
+-----------+-------+-----------------+--------------
+(0 rows)
+
